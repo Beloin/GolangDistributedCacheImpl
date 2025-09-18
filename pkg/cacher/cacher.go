@@ -2,6 +2,6 @@
 package cacher
 
 type Cacher interface {
-	GetString(s string) (bool, string)
+	GetString(s string) (string, bool)
 	SetString(key string, value string) bool
 }
