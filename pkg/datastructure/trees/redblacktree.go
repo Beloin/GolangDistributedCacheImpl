@@ -62,7 +62,7 @@ func (r *RedBlackTree[T]) getNextLeaf(n *Node[T]) *Node[T] {
 	var last, curr *Node[T]
 	for last, curr = r.root, r.root; curr != nil; {
 		last = curr
-		if curr.value.Compare(n.value) >= 0 {
+		if n.value.Compare(curr.value) >= 0 {
 			curr = curr.right
 			continue
 		}
@@ -85,19 +85,19 @@ func (r *RedBlackTree[T]) Insert(v T) {
 		return
 	}
 
-	// TODO: Will leaf be nil?
+	// TODO: Will parent be nil?
 	// Leaf as parent
-	leaf := r.getNextLeaf(newNode)
-	newNode.parent = leaf
+	parent := r.getNextLeaf(newNode)
+	newNode.parent = parent
 
-	isRight := leaf.value.Compare(newNode.value) >= 0
+	isRight := newNode.value.Compare(parent.value) >= 0
 	if isRight {
-		leaf.right = newNode
+		parent.right = newNode
 	} else {
-		leaf.left = newNode
+		parent.left = newNode
 	}
 
-	if leaf.color == BLACK {
+	if parent.color == BLACK {
 		return
 	}
 
@@ -149,8 +149,8 @@ func (n *Node[T]) repaint() {
 	}
 }
 
-func (n *Node[T]) leftRotate() {
-	// On N3:
+func (tree *RedBlackTree[T]) leftRotate(x *Node[T]) {
+	// On N1:
 	//         N0                 N0
 	//        /                  /
 	//       N1                 N3
@@ -159,34 +159,29 @@ func (n *Node[T]) leftRotate() {
 	//         /  \          /  \
 	//        N5   N4       N2   N5
 
-	if n.parent == nil {
-		return
+	y := x.right
+	x.right = y.left
+
+	if y.left != nil {
+		y.left.parent = x
 	}
 
-	parent := n.parent
-	grandparent := parent.parent
+	y.parent = x.parent
 
-	if parent.right != n {
-		return
+	if y.parent == nil {
+		tree.root = y
+	} else if x == x.parent.left {
+		x.parent.left = y
+	} else {
+		x.parent.right = y
 	}
 
-	n.parent = grandparent
-	if grandparent != nil {
-		if grandparent.left == parent {
-			grandparent.left = n
-		} else {
-			grandparent.right = n
-		}
-	}
-
-	parent.right = n.left
-	n.left.parent = parent
-	n.left = parent
-	parent.parent = n
+	y.left = x
+	x.parent = y
 }
 
 func (n *Node[T]) rightRotate() {
-	// On N2:
+	// On N1:
 	//         N0                 N0
 	//        /                  /
 	//       N1                 N2
