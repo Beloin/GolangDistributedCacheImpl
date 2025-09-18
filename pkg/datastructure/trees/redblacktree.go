@@ -73,6 +73,7 @@ func (r *RedBlackTree[T]) getNextLeaf(n *Node[T]) *Node[T] {
 	return last
 }
 
+// TODO: Follow the book
 func (r *RedBlackTree[T]) Insert(v T) {
 	newNode := &Node[T]{
 		value: v,
@@ -80,7 +81,7 @@ func (r *RedBlackTree[T]) Insert(v T) {
 	}
 
 	if r.root == nil {
-		newNode.color = BLACK
+		newNode.color = BLACK // Fix violation of ruile 2.
 		r.root = newNode
 		return
 	}
@@ -101,51 +102,61 @@ func (r *RedBlackTree[T]) Insert(v T) {
 		return
 	}
 
-	// Fixing the tree
-
 	// From here we can assure that newNode has Grandparent and an uncle (even if it's nil), since it's father is Red
-	if newNode.Uncle().color == RED {
-		newNode.repaint()
-		return
-	}
 
-	if isRight {
-		newNode.leftRotate()
-		newNode = newNode.left
-	} else {
-		newNode.rightRotate()
-		newNode = newNode.right
-	}
-
-	newNode.parent.color = BLACK
-	grandparent := newNode.Grandparent()
-	grandparent.color = RED
-
-	if newNode == newNode.parent.left && newNode.parent == grandparent.left {
-		newNode.parent.rightRotate()
-	} else {
-		newNode.parent.leftRotate()
-	}
+	// Fixing the tree
+	r.fix(newNode)
 }
 
-func (n *Node[T]) repaint() {
-	// Paint both parent and uncle as BLACK, paint the Grandparent as RED, and then repaint-it
-	// based on the Grandparent status
-	for n.Uncle() != nil && n.Uncle().color == RED && n.parent.color == RED {
-		n.Uncle().color = BLACK
-		n.parent.color = BLACK
+func (tree *RedBlackTree[T]) fix(n *Node[T]) {
+	// loop invariant: `n` is always RED
+	for n.parent != nil || n.parent.color == RED { // Violation of rule 4.
+		if n.parent == n.Grandparent().left {
+			uc := n.Grandparent().right
 
-		n = n.Grandparent()
-		n.color = RED
+			if uc != nil && uc.color == RED {
+				n.parent.color = BLACK                 // |  Case 01
+				uc.color = BLACK                       // |
+				n.Grandparent().color = RED
+				n = n.Grandparent()
+			} else {
+				if n == n.parent.right {
+					n = n.parent                         // | Case 02
+					tree.leftRotate(n)                // |
+				}
 
-		if n.parent == nil {
-			n.color = BLACK
-			break
+				n.parent.color = BLACK                 // | Case 03
+				n.Grandparent().color = RED            // |
+				tree.rightRotate(n.Grandparent())
+			}
+
+		} else {
+			uc := n.Grandparent().left
+
+			if uc != nil && uc.color == RED {
+				n.parent.color = BLACK
+				uc.color = BLACK
+				n.Grandparent().color = RED
+				n = n.Grandparent()
+			}else {
+				if n == n.parent.left {
+					n = n.parent
+					tree.rightRotate(n)
+				}
+
+				n.parent.color = BLACK
+				n.Grandparent().color = RED
+				tree.leftRotate(n.Grandparent())
+			}
 		}
+	}
 
-		if n.parent.color == BLACK {
-			break
-		}
+	tree.root.color = BLACK
+}
+
+func (tree *RedBlackTree[T]) Delete(v T)  {
+	newNode := &Node[T]{
+		value: v,
 	}
 }
 
