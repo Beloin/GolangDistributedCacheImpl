@@ -180,7 +180,7 @@ func (tree *RedBlackTree[T]) leftRotate(x *Node[T]) {
 	x.parent = y
 }
 
-func (n *Node[T]) rightRotate() {
+func (tree *RedBlackTree[T]) rightRotate(x *Node[T]) {
 	// On N1:
 	//         N0                 N0
 	//        /                  /
@@ -190,28 +190,22 @@ func (n *Node[T]) rightRotate() {
 	//   /  \                     /  \
 	//  N5   N4                  N4   N3
 
-	if n.parent == nil {
-		return
+	y := x.left
+	x.left = y.right
+
+	if y.right != nil {
+		y.right.parent = x
 	}
 
-	parent := n.parent
-	grandparent := parent.parent
-
-	if parent.left != n {
-		return
+	y.parent = x.parent
+	if x.parent == nil {
+		tree.root = y
+	} else if x == x.parent.left {
+		x.parent.left = y
+	} else {
+		x.parent.right = y
 	}
 
-	n.parent = grandparent
-	if grandparent != nil {
-		if grandparent.left == parent {
-			grandparent.left = n
-		} else {
-			grandparent.right = n
-		}
-	}
-
-	parent.left = n.right
-	n.right.parent = parent
-	n.right = parent
-	parent.parent = n
+	y.right = x
+	x.parent = y
 }
