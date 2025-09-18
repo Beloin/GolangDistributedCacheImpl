@@ -8,7 +8,7 @@ type CacheService struct {
 	c cacher.Cacher
 }
 
-func (service *CacheService) GetString(s string) (bool, string) {
+func (service *CacheService) GetString(s string) (string, bool) {
 	return service.c.GetString(s)
 }
 
