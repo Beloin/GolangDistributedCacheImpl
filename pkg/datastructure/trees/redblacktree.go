@@ -112,7 +112,7 @@ func (r *RedBlackTree[T]) Insert(v T) {
 
 func (tree *RedBlackTree[T]) fix(n *Node[T]) {
 	// loop invariant: `n` is always RED
-	for n.parent != nil || n.parent.color == RED { // Violation of rule 4.
+	for n.parent != nil && n.parent.color == RED { // Violation of rule 4.
 		if n.parent == n.Grandparent().left {
 			uc := n.Grandparent().right
 
