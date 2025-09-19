@@ -6,5 +6,5 @@ type Comparable interface {
 	// greater:  1
 	// less:    -1
 	// equals:   0
-	Compare(Comparable) int
+	Compare(any) int
 }

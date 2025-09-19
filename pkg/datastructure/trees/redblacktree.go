@@ -73,7 +73,11 @@ func (r *RedBlackTree[T]) getNextLeaf(n *Node[T]) *Node[T] {
 	return last
 }
 
-// TODO: Follow the book
+func (r*RedBlackTree[T]) Read(outSlice []*T)  {
+	
+}
+
+// TODO: Follow the book!
 func (r *RedBlackTree[T]) Insert(v T) {
 	newNode := &Node[T]{
 		value: v,
@@ -86,8 +90,6 @@ func (r *RedBlackTree[T]) Insert(v T) {
 		return
 	}
 
-	// TODO: Will parent be nil?
-	// Leaf as parent
 	parent := r.getNextLeaf(newNode)
 	newNode.parent = parent
 
@@ -115,18 +117,18 @@ func (tree *RedBlackTree[T]) fix(n *Node[T]) {
 			uc := n.Grandparent().right
 
 			if uc != nil && uc.color == RED {
-				n.parent.color = BLACK                 // |  Case 01
-				uc.color = BLACK                       // |
+				n.parent.color = BLACK                   // |  Case 01
+				uc.color = BLACK                         // |
 				n.Grandparent().color = RED
 				n = n.Grandparent()
 			} else {
 				if n == n.parent.right {
-					n = n.parent                         // | Case 02
-					tree.leftRotate(n)                // |
+					n = n.parent                           // | Case 02
+					tree.leftRotate(n)                     // |
 				}
 
-				n.parent.color = BLACK                 // | Case 03
-				n.Grandparent().color = RED            // |
+				n.parent.color = BLACK                   // | Case 03
+				n.Grandparent().color = RED              // |
 				tree.rightRotate(n.Grandparent())
 			}
 
@@ -138,7 +140,7 @@ func (tree *RedBlackTree[T]) fix(n *Node[T]) {
 				uc.color = BLACK
 				n.Grandparent().color = RED
 				n = n.Grandparent()
-			}else {
+			} else {
 				if n == n.parent.left {
 					n = n.parent
 					tree.rightRotate(n)
@@ -154,10 +156,26 @@ func (tree *RedBlackTree[T]) fix(n *Node[T]) {
 	tree.root.color = BLACK
 }
 
-func (tree *RedBlackTree[T]) Delete(v T)  {
-	newNode := &Node[T]{
-		value: v,
+func (tree *RedBlackTree[T]) Delete(v T) T {
+	// newNode := &Node[T]{
+	// 	value: v,
+	// }
+	
+	// Zero value return
+	var zero T
+	return zero
+}
+
+func (tree *RedBlackTree[T]) transplant(u, v *Node[T]) {
+	if u.parent == nil {
+		tree.root = v
+	} else if u == u.parent.left {
+		u.parent.left = v
+	} else {
+		u.parent.right = v
 	}
+
+	v.parent = u.parent
 }
 
 func (tree *RedBlackTree[T]) leftRotate(x *Node[T]) {
