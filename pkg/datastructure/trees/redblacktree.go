@@ -3,6 +3,7 @@ package trees
 
 import (
 	"beloin.com/distributed-cache/pkg/datastructure"
+	"beloin.com/distributed-cache/pkg/datastructure/collections"
 )
 
 type Color uint8
@@ -73,8 +74,18 @@ func (r *RedBlackTree[T]) getNextLeaf(n *Node[T]) *Node[T] {
 	return last
 }
 
-func (r*RedBlackTree[T]) Read(outSlice []*T)  {
-	
+// TODO: Implement this so we can test the insertion
+func (r*RedBlackTree[T]) Read(outSlice []T)  {
+	stack := collections.NewStack(10)
+
+	node := r.root
+	for node != nil{
+		stack.Push(node.right)
+		stack.Push(node.left)
+		outSlice = append(outSlice, node.value)
+
+		node = stack.Pop().(*Node[T])
+	}
 }
 
 // TODO: Follow the book!
