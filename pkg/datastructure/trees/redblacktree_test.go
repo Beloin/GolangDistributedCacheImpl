@@ -1,26 +1,89 @@
 package trees
 
-// TODO: Implement tests based on this
+import (
+	"reflect"
+	"testing"
+)
 
-// import (
-// 	"testing"
+type TestInt int
+
+func (t TestInt) Compare(other any) int {
+	otherInt := other.(TestInt)
+	if t < otherInt {
+		return -1
+	}
+	if t > otherInt {
+		return 1
+	}
+	return 0
+}
+
+func TestRedBlackTree_InsertSingle(t *testing.T) {
+	tree := NewRedBlackTree[TestInt]()
+	tree.Insert(TestInt(42))
+
+	if tree.root == nil {
+		t.Error("Tree should have root after insertion")
+	}
+	if tree.root.value != TestInt(42) {
+		t.Errorf("Root value should be 42, got %v", tree.root.value)
+	}
+	if tree.root.color != BLACK {
+		t.Error("Root should be black")
+	}
+	if tree.root.left != nil {
+		t.Error("Root left should be nil")
+	}
+	if tree.root.right != nil {
+		t.Error("Root right should be nil")
+	}
+}
+
+func TestRedBlackTree_ReadTree(t *testing.T) {
+	tree := NewRedBlackTree[TestInt]()
+	tree.Insert(TestInt(42))
+
+	arr := make([]TestInt, 0, 1)
+	arr = tree.Read(arr)
+
+	if len(arr) == 0 {
+		t.Error("No item read")
+	}
+}
+
+func TestRedBlackTree_SmallTreeRead(t *testing.T) {
+	// Tree:
+	//            2B
+	//           /  \
+	//          1B  4B
+	//             /  \
+	//            3R   5R
+	//
+	// Result order:
+	//  [ 2, 1, 4, 3, 5 ]
+	tree := NewRedBlackTree[TestInt]()
+	tree.Insert(TestInt(1))
+	tree.Insert(TestInt(2))
+	tree.Insert(TestInt(3))
+	tree.Insert(TestInt(4))
+	tree.Insert(TestInt(5))
+
+	arr := make([]TestInt, 0, 1)
+	arr = tree.Read(arr)
+
+	if len(arr) == 0 {
+		t.Error("No item read")
+	}
+
+	expected := []TestInt{2, 1, 4, 3, 5}
+
+	if !reflect.DeepEqual(expected, arr) {
+		t.Errorf("Expected %+v != %+v", expected, arr)
+	}
+}
+
+// TODO: Implement tests based on this
 //
-// 	"beloin.com/distributed-cache/pkg/datastructure"
-// )
-//
-// // TestInt implements Comparable for testing
-// type TestInt int
-//
-// func (t TestInt) Compare(other datastructure.Comparable) int {
-// 	otherInt := other.(TestInt)
-// 	if t < otherInt {
-// 		return -1
-// 	}
-// 	if t > otherInt {
-// 		return 1
-// 	}
-// 	return 0
-// }
 //
 // func TestRedBlackTree_New(t *testing.T) {
 // 	tree := NewRedBlackTree[TestInt]()

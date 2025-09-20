@@ -75,17 +75,29 @@ func (r *RedBlackTree[T]) getNextLeaf(n *Node[T]) *Node[T] {
 }
 
 // TODO: Implement this so we can test the insertion
-func (r*RedBlackTree[T]) Read(outSlice []T)  {
-	stack := collections.NewStack(10)
+func (r *RedBlackTree[T]) Read(outSlice []T) []T {
+	stack := collections.NewStack(1)
 
 	node := r.root
-	for node != nil{
-		stack.Push(node.right)
-		stack.Push(node.left)
+	for node != nil {
+		if node.right != nil {
+			stack.Push(node.right)
+		}
+
+		if node.left != nil {
+			stack.Push(node.left)
+		}
+
 		outSlice = append(outSlice, node.value)
 
-		node = stack.Pop().(*Node[T])
+		if stack.Empty() {
+			node = nil
+		} else {
+			node = stack.Pop().(*Node[T])
+		}
 	}
+
+	return outSlice
 }
 
 // TODO: Follow the book!
