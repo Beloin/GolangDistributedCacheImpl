@@ -59,7 +59,7 @@ func TestRedBlackTree_SmallTreeRead(t *testing.T) {
 	//             /  \
 	//            3R   5R
 	//
-	// Result order:
+	// Result order (stack)
 	//  [ 2, 1, 4, 3, 5 ]
 	tree := NewRedBlackTree[TestInt]()
 	tree.Insert(TestInt(1))
@@ -77,6 +77,55 @@ func TestRedBlackTree_SmallTreeRead(t *testing.T) {
 
 	expected := []TestInt{2, 1, 4, 3, 5}
 
+	if !reflect.DeepEqual(expected, arr) {
+		t.Errorf("Expected %+v != %+v", expected, arr)
+	}
+}
+
+func TestRedBlackTree_SmallTreeReadLeft(t *testing.T) {
+	// Tree:
+	//            5B
+	//          /    \
+	//         3B     \
+	//        /  \     \
+	//       2B   4B    \
+	//      /            \
+	//     1R            11B
+	//                  /    \
+	//                 /     21B
+	//                /     /   \
+	//               /    20R   22R
+	//              8R
+	//             /  \
+	//           6B    10B
+	//                /
+	//               9R
+	//
+	// Result order (stack)
+	//  [ 5, 3, 2, 1, 4, 11, 8, 6, 10, 9, 21, 20, 22 ]
+	tree := NewRedBlackTree[TestInt]()
+	tree.Insert(TestInt(10))
+	tree.Insert(TestInt(11))
+	tree.Insert(TestInt(21))
+	tree.Insert(TestInt(5))
+	tree.Insert(TestInt(4))
+	tree.Insert(TestInt(6))
+	tree.Insert(TestInt(3))
+	tree.Insert(TestInt(2))
+	tree.Insert(TestInt(8))
+	tree.Insert(TestInt(1))
+	tree.Insert(TestInt(9))
+	tree.Insert(TestInt(20))
+	tree.Insert(TestInt(22))
+
+	arr := make([]TestInt, 0, 1)
+	arr = tree.Read(arr)
+
+	if len(arr) == 0 {
+		t.Error("No item read")
+	}
+
+	expected := []TestInt{5, 3, 2, 1, 4, 11, 8, 6, 10, 9, 21, 20, 22}
 	if !reflect.DeepEqual(expected, arr) {
 		t.Errorf("Expected %+v != %+v", expected, arr)
 	}
