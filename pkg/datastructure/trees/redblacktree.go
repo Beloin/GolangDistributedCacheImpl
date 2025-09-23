@@ -59,6 +59,26 @@ func NewRedBlackTree[T datastructure.Comparable]() *RedBlackTree[T] {
 	return &RedBlackTree[T]{}
 }
 
+func (r *RedBlackTree[T]) Search(value T) T {
+	var res T
+	for curr := r.root; curr != nil; {
+		newVar := value.Compare(curr.value)
+		if newVar > 0 {
+			curr = curr.right
+			continue
+		}
+
+		if newVar == 0 {
+			res = curr.value
+			break
+		}
+
+		curr = curr.left
+	}
+
+	return res
+}
+
 func (r *RedBlackTree[T]) getNextLeaf(n *Node[T]) *Node[T] {
 	var last, curr *Node[T]
 	for last, curr = r.root, r.root; curr != nil; {

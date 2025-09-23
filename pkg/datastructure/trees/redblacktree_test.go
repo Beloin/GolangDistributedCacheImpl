@@ -131,6 +131,67 @@ func TestRedBlackTree_SmallTreeReadLeft(t *testing.T) {
 	}
 }
 
+func TestRedBlackTree_SearchInsideTree(t *testing.T) {
+	tree := createTestIntPointerFunction()
+
+	searchValue := TestInt(6)
+	hasValue := tree.Search(searchValue)
+
+	if hasValue != searchValue {
+		t.Error("Do not point to the same address")
+	}
+
+}
+
+func TestRedBlackTree_SearchInsideTreeNotFound(t *testing.T) {
+	tree := createTestIntPointerFunction()
+
+	searchValue := TestInt(100)
+	hasValue := tree.Search(searchValue)
+
+	if hasValue != 0 {
+		t.Error("Should not find any value")
+	}
+}
+
+func createTestIntPointerFunction() *RedBlackTree[TestInt] {
+	// Tree:
+	//            5B
+	//          /    \
+	//         3B     \
+	//        /  \     \
+	//       2B   4B    \
+	//      /            \
+	//     1R            11B
+	//                  /    \
+	//                 /     21B
+	//                /     /   \
+	//               /    20R   22R
+	//              8R
+	//             /  \
+	//           6B    10B
+	//                /
+	//               9R
+	//
+	// Result order (stack)
+	//  [ 5, 3, 2, 1, 4, 11, 8, 6, 10, 9, 21, 20, 22 ]
+	tree := NewRedBlackTree[TestInt]()
+	tree.Insert(TestInt(10))
+	tree.Insert(TestInt(11))
+	tree.Insert(TestInt(21))
+	tree.Insert(TestInt(5))
+	tree.Insert(TestInt(4))
+	tree.Insert(TestInt(6))
+	tree.Insert(TestInt(3))
+	tree.Insert(TestInt(2))
+	tree.Insert(TestInt(8))
+	tree.Insert(TestInt(1))
+	tree.Insert(TestInt(9))
+	tree.Insert(TestInt(20))
+	tree.Insert(TestInt(22))
+	return tree
+}
+
 // TODO: Implement tests based on this
 //
 //
