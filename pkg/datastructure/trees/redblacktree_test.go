@@ -138,7 +138,7 @@ func TestRedBlackTree_SearchInsideTree(t *testing.T) {
 	hasValue := tree.Search(searchValue)
 
 	if hasValue != searchValue {
-		t.Error("Do not point to the same address")
+		t.Error("Values differ")
 	}
 
 }
@@ -150,6 +150,17 @@ func TestRedBlackTree_SearchInsideTreeNotFound(t *testing.T) {
 	hasValue := tree.Search(searchValue)
 
 	if hasValue != 0 {
+		t.Error("Should not find any value")
+	}
+}
+
+func TestRedBlackTree_DeleteItemInTree(t *testing.T) {
+	tree := createTestIntPointerFunction()
+
+	hasValue := tree.Delete(21)
+
+	// TODO: Test tree structure
+	if hasValue == 0 {
 		t.Error("Should not find any value")
 	}
 }

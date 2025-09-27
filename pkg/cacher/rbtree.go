@@ -3,7 +3,8 @@ package cacher
 import "beloin.com/distributed-cache/pkg/datastructure/trees"
 
 type internalComparable struct {
-	v string
+	key   string
+	value string
 }
 
 func (ic *internalComparable) Compare(other any) int {
@@ -12,9 +13,23 @@ func (ic *internalComparable) Compare(other any) int {
 		return 0
 	}
 
-	return len(ic.v) - len(otheric.v)
+	return len(ic.key) - len(otheric.key)
 }
 
 type RBCacher struct {
 	rbtree trees.RedBlackTree[*internalComparable]
+}
+
+func (cacher *RBCacher) GetString(key string) (string, bool) {
+	result := cacher.rbtree.Search(&internalComparable{key: key})
+	if result != nil {
+		return result.value, true
+	}
+
+	return "", false
+}
+
+func (cacher *RBCacher) SetString(key string, value string) bool {
+	cacher.rbtree.Insert(&internalComparable{key: key, value: value})
+	return true
 }

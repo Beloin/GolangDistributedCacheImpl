@@ -9,8 +9,8 @@ import (
 type Color uint8
 
 const (
-	RED   = 0
-	BLACK = 1
+	BLACK = iota
+	RED   = iota
 )
 
 type Node[T datastructure.Comparable] struct {
@@ -55,28 +55,50 @@ type RedBlackTree[T datastructure.Comparable] struct {
 	Depth int
 }
 
+func (r *RedBlackTree[T]) Minimum(node *Node[T]) *Node[T] {
+	if node == nil {
+		return nil
+	}
+
+	for node.left != nil {
+		node = node.left
+	}
+
+	return node
+}
+
 func NewRedBlackTree[T datastructure.Comparable]() *RedBlackTree[T] {
 	return &RedBlackTree[T]{}
 }
 
-func (r *RedBlackTree[T]) Search(value T) T {
-	var res T
+func (r *RedBlackTree[T]) SearchNode(value T) *Node[T] {
+	var node *Node[T]
 	for curr := r.root; curr != nil; {
-		newVar := value.Compare(curr.value)
-		if newVar > 0 {
+		compare := value.Compare(curr.value)
+		if compare > 0 {
 			curr = curr.right
 			continue
 		}
 
-		if newVar == 0 {
-			res = curr.value
+		if compare == 0 {
+			node = curr
 			break
 		}
 
 		curr = curr.left
 	}
 
-	return res
+	return node
+}
+
+func (r *RedBlackTree[T]) Search(value T) T {
+	node := r.SearchNode(value)
+	if node == nil {
+		var zero T
+		return zero
+	}
+
+	return node.value
 }
 
 func (r *RedBlackTree[T]) getNextLeaf(n *Node[T]) *Node[T] {
@@ -94,7 +116,6 @@ func (r *RedBlackTree[T]) getNextLeaf(n *Node[T]) *Node[T] {
 	return last
 }
 
-// TODO: Implement this so we can test the insertion
 func (r *RedBlackTree[T]) Read(outSlice []T) []T {
 	stack := collections.NewStack(1)
 
@@ -150,10 +171,10 @@ func (r *RedBlackTree[T]) Insert(v T) {
 	// From here we can assure that newNode has Grandparent and an uncle (even if it's nil), since it's father is Red
 
 	// Fixing the tree
-	r.fix(newNode)
+	r.insertFix(newNode)
 }
 
-func (tree *RedBlackTree[T]) fix(n *Node[T]) {
+func (tree *RedBlackTree[T]) insertFix(n *Node[T]) {
 	// loop invariant: `n` is always RED
 	for n.parent != nil && n.parent.color == RED { // Violation of rule 4.
 		if n.parent == n.Grandparent().left {
@@ -167,7 +188,7 @@ func (tree *RedBlackTree[T]) fix(n *Node[T]) {
 			} else {
 				if n == n.parent.right {
 					n = n.parent                           // | Case 02
-					tree.leftRotate(n)                     // |
+					tree.leftRotate(n)                  // |
 				}
 
 				n.parent.color = BLACK                   // | Case 03
@@ -203,10 +224,67 @@ func (tree *RedBlackTree[T]) Delete(v T) T {
 	// newNode := &Node[T]{
 	// 	value: v,
 	// }
-	
-	// Zero value return
+
 	var zero T
-	return zero
+
+	node := tree.SearchNode(v)
+	if node == nil {
+		return zero
+	}
+
+	if node.left == nil && node.right == nil {
+		if node.parent != nil {
+			if node.parent.left == node {
+				node.parent.left = nil
+			} else {
+				node.parent.right = nil
+			}
+		} else {
+			tree.root = nil
+		}
+
+		// free(node)
+		return node.value
+	}
+
+	// TODO: This is based that node is an INTERNAL Node (meaning is not a leaf)
+
+	y := node
+	yColor := y.color
+
+	var x *Node[T]
+	if node.left == nil {
+		x = node.right
+		tree.transplant(node, node.right)
+	} else if node.right == nil {
+		x = node.left
+		tree.transplant(node, node.left)
+	} else {
+		y = tree.Minimum(node.right)
+		yColor = y.color
+		x = y.right
+		
+		if y != node.right {
+			tree.transplant(y, y.right)
+			y.right = node.right
+			y.right.parent = y
+		} else {
+			// Creating a invalid node to prevent nil pointer
+			// TODO: Possible problem when x is this, how to know if it's right or left of Y
+			x = &Node[T]{color: BLACK}
+			x.parent = y
+			tree.transplant(node, y)
+			y.left = node.left
+			y.left.parent  = y
+			y.color = node.color
+		}
+	}
+
+	if yColor == BLACK {
+		tree.deleteFix(x)
+	}
+
+	return node.value
 }
 
 func (tree *RedBlackTree[T]) transplant(u, v *Node[T]) {
@@ -219,6 +297,69 @@ func (tree *RedBlackTree[T]) transplant(u, v *Node[T]) {
 	}
 
 	v.parent = u.parent
+}
+
+func (tree *RedBlackTree[T]) deleteFix(node*Node[T])  {
+	for node != tree.root && node.color == BLACK {
+		if node == node.parent.left {
+			w := node.parent.right
+			
+			if w.color == RED {
+				w.color = BLACK                  //   | Case 01
+				node.parent.color = RED          //   |
+				tree.leftRotate(node.parent)
+				w = node.parent.right
+			}
+
+			if w.left.color == BLACK && w.right.color == BLACK {
+				w.color = RED                    //  | Case 02
+				node = node.parent               //  |
+			} else {
+				if w.right.color == BLACK {
+					w.left.color = BLACK           //  | Case 03
+					w.color = RED                  //  |
+					tree.rightRotate(w)
+					w = node.parent.right
+				}
+
+				w.color = node.parent.color      //  | Case 04
+				node.parent.color = BLACK        //  |
+
+				w.right.color = BLACK
+				tree.leftRotate(node.parent)
+				node = tree.root
+			}
+		} else {
+			w := node.parent.left
+
+			if w.color == RED {
+				w.color = BLACK
+				node.parent.color = RED
+				tree.rightRotate(node.parent)
+				w = node.parent.left
+			}
+
+			if w.right.color == BLACK && w.left.color == BLACK {
+				w.color = RED
+				node = node.parent
+			} else {
+				if w.left.color == BLACK {
+					w.right.color = BLACK
+					w.color = RED
+					tree.leftRotate(w)
+					w = node.parent.left
+				}
+
+				w.color = node.parent.color
+				node.parent.color = BLACK
+				w.left.color = BLACK
+				tree.rightRotate(node.parent)
+				node = tree.root
+			}
+		}
+	}
+
+	node.color = BLACK
 }
 
 func (tree *RedBlackTree[T]) leftRotate(x *Node[T]) {
