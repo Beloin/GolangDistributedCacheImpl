@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package network.v1;
+
+option go_package = "beloin.com/distributed-cache/internal/network/proto";
+
+message GreetRequest { string name = 1; }
+
+message GreetResponse { string result = 1; }
+
+service GreetService { rpc Greet(GreetRequest) returns (GreetResponse); }
