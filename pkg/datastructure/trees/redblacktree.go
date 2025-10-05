@@ -220,11 +220,8 @@ func (tree *RedBlackTree[T]) insertFix(n *Node[T]) {
 	tree.root.color = BLACK
 }
 
+// Delete a node
 func (tree *RedBlackTree[T]) Delete(v T) T {
-	// newNode := &Node[T]{
-	// 	value: v,
-	// }
-
 	var zero T
 
 	node := tree.SearchNode(v)
@@ -247,7 +244,7 @@ func (tree *RedBlackTree[T]) Delete(v T) T {
 		return node.value
 	}
 
-	// TODO: This is based that node is an INTERNAL Node (meaning is not a leaf)
+	// From now on this is based that node is an INTERNAL Node (not a leaf)
 
 	y := node
 	yColor := y.color
@@ -270,7 +267,6 @@ func (tree *RedBlackTree[T]) Delete(v T) T {
 			y.right.parent = y
 		} else {
 			// Creating a invalid node to prevent nil pointer
-			// TODO: Possible problem when x is this, how to know if it's right or left of Y
 			x = &Node[T]{color: BLACK}
 			x.parent = y
 			tree.transplant(node, y)
