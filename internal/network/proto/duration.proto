@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package network.v1;
+
+option go_package = "beloin.com/distributed-cache/internal/network/proto";
+
+enum Unit {
+  Second = 0;
+  Minute = 1;
+  Hour = 2;
+  Day = 3;
+}
+
+message Duration {
+  Unit unit = 1;
+  uint64 value = 2;
+}

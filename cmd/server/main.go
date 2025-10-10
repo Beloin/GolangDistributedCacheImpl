@@ -5,15 +5,12 @@ import (
 	"net"
 	"os"
 
-	pb "beloin.com/distributed-cache/internal/network/proto"
 	"google.golang.org/grpc"
 )
 
 const addr = "0.0.0.0:50051"
 
-type Server struct {
-	pb.UnimplementedGreetServiceServer
-}
+type Server struct{}
 
 func main() {
 	*log.Default() = *log.New(os.Stdout, "", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
@@ -30,8 +27,6 @@ func main() {
 	log.Printf("Listening on %s\n", addr)
 
 	s := grpc.NewServer()
-	service := Server{}
-	pb.RegisterGreetServiceServer(s, &service)
 
 	if err = s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve %s\n", err.Error())

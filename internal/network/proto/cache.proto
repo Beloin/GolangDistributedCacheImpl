@@ -4,6 +4,39 @@ package network.v1;
 
 option go_package = "beloin.com/distributed-cache/internal/network/proto";
 
+import "duration.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+message Cache {
+  string key = 1;
+  google.protobuf.Timestamp ttl = 2;
+  google.protobuf.Any value = 3;
+}
+
 message ReadCacheRequest {
   string key = 1;
+  Duration max_age = 2;
+}
+
+message ReadCacheResponse {
+  optional Cache cache = 1;
+  bool hit = 2;
+}
+
+message StoreCacheRequest {
+  string key = 1;
+  Duration ttl = 2;
+  google.protobuf.Any value = 3;
+}
+
+message StoreCacheResponse {
+  string key = 1;
+  bool has_overriden = 2;
+  google.protobuf.Timestamp ttl = 3;
+}
+
+service CacheService {
+  rpc ReadCache(ReadCacheRequest) returns (ReadCacheResponse);
+  rpc StoreCache(StoreCacheRequest) returns (StoreCacheResponse);
 }

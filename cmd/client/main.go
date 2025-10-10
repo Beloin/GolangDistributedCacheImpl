@@ -1,12 +1,9 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
-	"time"
 
-	pb "beloin.com/distributed-cache/internal/network/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -24,18 +21,8 @@ func main() {
 	}
 	defer conn.Close()
 
-	service := pb.NewGreetServiceClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := pb.GreetRequest{Name: "Juan"}
-	resp, err :=service.Greet(ctx, &req)
-	if err != nil {
-		panic(err)
-	}
-
-	log.Printf("Response: %s", resp.GetResult())
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancel()
 
 	log.Println("Ended client")
 }

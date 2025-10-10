@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package network.v1;
-
-option go_package = "beloin.com/distributed-cache/internal/network/proto";
-
-message Dummy { uint32 id = 1; }
-
-service DummyService {}
