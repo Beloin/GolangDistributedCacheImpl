@@ -5,6 +5,10 @@ import (
 	"net"
 	"os"
 
+	"beloin.com/distributed-cache/internal/cache"
+	"beloin.com/distributed-cache/internal/network/proto"
+	"beloin.com/distributed-cache/internal/network/server"
+	"beloin.com/distributed-cache/pkg/cacher"
 	"google.golang.org/grpc"
 )
 
@@ -27,6 +31,12 @@ func main() {
 	log.Printf("Listening on %s\n", addr)
 
 	s := grpc.NewServer()
+
+	cacherServer := &server.CacherServer{
+		Service: cache.CacheService{C: cacher.NewHashMapCacher()},
+	}
+	proto.RegisterRestoreServiceServer(s, cacherServer)
+	proto.RegisterCacheServiceServer(s, cacherServer)
 
 	if err = s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve %s\n", err.Error())

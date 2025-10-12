@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package network.v1;
+
+option go_package = "beloin.com/distributed-cache/internal/network/proto";
+
+
+import "cache.proto";
+import "google/protobuf/timestamp.proto";
+
+message RestoreRequest {
+  uint32 batch = 1;
+  google.protobuf.Timestamp from = 2;
+}
+
+message RestoreResponse {
+  repeated Cache caches = 1;
+}
+
+service RestoreService {
+  rpc Restore(RestoreRequest) returns (stream RestoreResponse);
+}

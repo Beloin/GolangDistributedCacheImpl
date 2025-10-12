@@ -33,3 +33,17 @@ func (cacher *RBCacher) SetString(key string, value string) bool {
 	cacher.rbtree.Insert(&internalComparable{key: key, value: value})
 	return true
 }
+
+func (cacher *RBCacher) Paginate(from, limit int) map[string]string {
+	// TODO: Implement proper pagination:
+	// Maybe something cursor based: cursor.next(n)
+	var out []*internalComparable
+	out = cacher.rbtree.Read(out)
+
+	data := map[string]string{}
+	for _, intC := range out {
+		data[intC.key] = intC.value
+	}
+
+	return data
+}
