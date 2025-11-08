@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package network.v1;
+
+option go_package = "beloin.com/distributed-cache/internal/network/proto";
+
+// TODO: Implement messages to:
+//  1. Upload a new key when one was uploaded, as communication between servers
+//        { key, value, time } -> Working something close to lamport clock,
+//                                if time > my_time: 
+//                                   update my_time,
+//                                   add the new key to cache
+//  2. Request for update (already implemented in restore)

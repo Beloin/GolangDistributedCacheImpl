@@ -122,3 +122,98 @@ var RestoreService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Metadata: "restore.proto",
 }
+
+const (
+	DumpService_Dump_FullMethodName = "/network.v1.DumpService/Dump"
+)
+
+// DumpServiceClient is the client API for DumpService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type DumpServiceClient interface {
+	Dump(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[DumpRequest, DumpResponse], error)
+}
+
+type dumpServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewDumpServiceClient(cc grpc.ClientConnInterface) DumpServiceClient {
+	return &dumpServiceClient{cc}
+}
+
+func (c *dumpServiceClient) Dump(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[DumpRequest, DumpResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &DumpService_ServiceDesc.Streams[0], DumpService_Dump_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[DumpRequest, DumpResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type DumpService_DumpClient = grpc.ClientStreamingClient[DumpRequest, DumpResponse]
+
+// DumpServiceServer is the server API for DumpService service.
+// All implementations must embed UnimplementedDumpServiceServer
+// for forward compatibility.
+type DumpServiceServer interface {
+	Dump(grpc.ClientStreamingServer[DumpRequest, DumpResponse]) error
+	mustEmbedUnimplementedDumpServiceServer()
+}
+
+// UnimplementedDumpServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedDumpServiceServer struct{}
+
+func (UnimplementedDumpServiceServer) Dump(grpc.ClientStreamingServer[DumpRequest, DumpResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method Dump not implemented")
+}
+func (UnimplementedDumpServiceServer) mustEmbedUnimplementedDumpServiceServer() {}
+func (UnimplementedDumpServiceServer) testEmbeddedByValue()                     {}
+
+// UnsafeDumpServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DumpServiceServer will
+// result in compilation errors.
+type UnsafeDumpServiceServer interface {
+	mustEmbedUnimplementedDumpServiceServer()
+}
+
+func RegisterDumpServiceServer(s grpc.ServiceRegistrar, srv DumpServiceServer) {
+	// If the following call pancis, it indicates UnimplementedDumpServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&DumpService_ServiceDesc, srv)
+}
+
+func _DumpService_Dump_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(DumpServiceServer).Dump(&grpc.GenericServerStream[DumpRequest, DumpResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type DumpService_DumpServer = grpc.ClientStreamingServer[DumpRequest, DumpResponse]
+
+// DumpService_ServiceDesc is the grpc.ServiceDesc for DumpService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var DumpService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "network.v1.DumpService",
+	HandlerType: (*DumpServiceServer)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Dump",
+			Handler:       _DumpService_Dump_Handler,
+			ClientStreams: true,
+		},
+	},
+	Metadata: "restore.proto",
+}

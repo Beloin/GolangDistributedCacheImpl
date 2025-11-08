@@ -118,6 +118,86 @@ func (x *RestoreResponse) GetCaches() []*Cache {
 	return nil
 }
 
+type DumpRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cache         *Cache                 `protobuf:"bytes,1,opt,name=cache,proto3" json:"cache,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DumpRequest) Reset() {
+	*x = DumpRequest{}
+	mi := &file_restore_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DumpRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DumpRequest) ProtoMessage() {}
+
+func (x *DumpRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_restore_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DumpRequest.ProtoReflect.Descriptor instead.
+func (*DumpRequest) Descriptor() ([]byte, []int) {
+	return file_restore_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *DumpRequest) GetCache() *Cache {
+	if x != nil {
+		return x.Cache
+	}
+	return nil
+}
+
+type DumpResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DumpResponse) Reset() {
+	*x = DumpResponse{}
+	mi := &file_restore_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DumpResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DumpResponse) ProtoMessage() {}
+
+func (x *DumpResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_restore_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DumpResponse.ProtoReflect.Descriptor instead.
+func (*DumpResponse) Descriptor() ([]byte, []int) {
+	return file_restore_proto_rawDescGZIP(), []int{3}
+}
+
 var File_restore_proto protoreflect.FileDescriptor
 
 const file_restore_proto_rawDesc = "" +
@@ -128,9 +208,14 @@ const file_restore_proto_rawDesc = "" +
 	"\x05batch\x18\x01 \x01(\rR\x05batch\x12.\n" +
 	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\"<\n" +
 	"\x0fRestoreResponse\x12)\n" +
-	"\x06caches\x18\x01 \x03(\v2\x11.network.v1.CacheR\x06caches2V\n" +
+	"\x06caches\x18\x01 \x03(\v2\x11.network.v1.CacheR\x06caches\"6\n" +
+	"\vDumpRequest\x12'\n" +
+	"\x05cache\x18\x01 \x01(\v2\x11.network.v1.CacheR\x05cache\"\x0e\n" +
+	"\fDumpResponse2V\n" +
 	"\x0eRestoreService\x12D\n" +
-	"\aRestore\x12\x1a.network.v1.RestoreRequest\x1a\x1b.network.v1.RestoreResponse0\x01B5Z3beloin.com/distributed-cache/internal/network/protob\x06proto3"
+	"\aRestore\x12\x1a.network.v1.RestoreRequest\x1a\x1b.network.v1.RestoreResponse0\x012J\n" +
+	"\vDumpService\x12;\n" +
+	"\x04Dump\x12\x17.network.v1.DumpRequest\x1a\x18.network.v1.DumpResponse(\x01B5Z3beloin.com/distributed-cache/internal/network/protob\x06proto3"
 
 var (
 	file_restore_proto_rawDescOnce sync.Once
@@ -144,23 +229,28 @@ func file_restore_proto_rawDescGZIP() []byte {
 	return file_restore_proto_rawDescData
 }
 
-var file_restore_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_restore_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_restore_proto_goTypes = []any{
 	(*RestoreRequest)(nil),        // 0: network.v1.RestoreRequest
 	(*RestoreResponse)(nil),       // 1: network.v1.RestoreResponse
-	(*timestamppb.Timestamp)(nil), // 2: google.protobuf.Timestamp
-	(*Cache)(nil),                 // 3: network.v1.Cache
+	(*DumpRequest)(nil),           // 2: network.v1.DumpRequest
+	(*DumpResponse)(nil),          // 3: network.v1.DumpResponse
+	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
+	(*Cache)(nil),                 // 5: network.v1.Cache
 }
 var file_restore_proto_depIdxs = []int32{
-	2, // 0: network.v1.RestoreRequest.from:type_name -> google.protobuf.Timestamp
-	3, // 1: network.v1.RestoreResponse.caches:type_name -> network.v1.Cache
-	0, // 2: network.v1.RestoreService.Restore:input_type -> network.v1.RestoreRequest
-	1, // 3: network.v1.RestoreService.Restore:output_type -> network.v1.RestoreResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4, // 0: network.v1.RestoreRequest.from:type_name -> google.protobuf.Timestamp
+	5, // 1: network.v1.RestoreResponse.caches:type_name -> network.v1.Cache
+	5, // 2: network.v1.DumpRequest.cache:type_name -> network.v1.Cache
+	0, // 3: network.v1.RestoreService.Restore:input_type -> network.v1.RestoreRequest
+	2, // 4: network.v1.DumpService.Dump:input_type -> network.v1.DumpRequest
+	1, // 5: network.v1.RestoreService.Restore:output_type -> network.v1.RestoreResponse
+	3, // 6: network.v1.DumpService.Dump:output_type -> network.v1.DumpResponse
+	5, // [5:7] is the sub-list for method output_type
+	3, // [3:5] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_restore_proto_init() }
@@ -175,9 +265,9 @@ func file_restore_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_restore_proto_rawDesc), len(file_restore_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_restore_proto_goTypes,
 		DependencyIndexes: file_restore_proto_depIdxs,

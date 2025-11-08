@@ -4,6 +4,8 @@ package server
 import (
 	"beloin.com/distributed-cache/internal/network/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
@@ -34,4 +36,8 @@ func (cs *CacherServer) Restore(req *proto.RestoreRequest, stream grpc.ServerStr
 	}
 
 	return nil
+}
+
+func (cs *CacherServer) Dump(grpc.ClientStreamingServer[proto.DumpRequest, proto.DumpResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method Dump not implemented")
 }
